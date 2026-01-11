@@ -36,7 +36,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v3
         with:
           project_id: ${{ steps.auth.outputs.project_id }}
-          version: '>= 551.0.0'
+          version: '>= 363.0.0'
 
       - name: Deploy to Google Cloud Run
         run: |
