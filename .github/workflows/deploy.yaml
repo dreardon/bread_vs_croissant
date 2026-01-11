@@ -1,0 +1,53 @@
+name: Deploy Code Updates
+
+on:
+ push:
+    branches:
+      - 'main'
+      - 'release/**/*'
+ workflow_dispatch:
+
+env:
+  WORKLOAD_IDENTITY_POOL: ${{ vars.WORKLOAD_IDENTITY_POOL }}
+  WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+  WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER: ${{ vars.WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER }}
+  PROJECT_ID: ${{ vars.PROJECT_ID }}
+
+permissions:
+  id-token: write 
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+            project_id: ${{ vars.PROJECT_ID }}
+            workload_identity_provider: 'projects/${{ vars.WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ vars.WORKLOAD_IDENTITY_POOL }}/providers/${{ vars.WORKLOAD_IDENTITY_PROVIDER }}'
+
+      - name: Install gcloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ steps.auth.outputs.project_id }}
+          version: '>= 551.0.0'
+
+      - name: Deploy to Google Cloud Run
+        run: |
+            echo "Deploying to Google Cloud Run"
+              gcloud run deploy bread-vs-croissant \
+                --source . \
+                --build-service-account projects/${{ vars.PROJECT_ID }}/serviceAccounts/cloudrun-build-sa@${{ vars.PROJECT_ID }}.iam.gserviceaccount.com \
+                --region ${{ vars.REGION }} \
+                --allow-unauthenticated \
+                --set-env-vars GCS_BUCKET_NAME=${{ vars.GCS_BUCKET_NAME }} \
+                --set-env-vars OAUTH_CLIENT_ID=${{ vars.OAUTH_CLIENT_ID }} \
+                --set-env-vars OAUTH_SECRET=${{ vars.OAUTH_SECRET }} \
+                --set-env-vars NEXTAUTH_SECRET=${{ vars.NEXTAUTH_SECRET }} \
+                --set-env-vars NEXTAUTH_URL=https://${{ vars.NEXTAUTH_URL }}
