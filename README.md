@@ -55,7 +55,7 @@ gcloud run deploy bread-vs-croissant \
   --set-env-vars OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID \
   --set-env-vars OAUTH_SECRET=$OAUTH_SECRET \
   --set-env-vars NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
-  --set-env-vars NEXTAUTH_URL=https://$FQDN
+  --set-env-vars NEXTAUTH_URL=$NEXTAUTH_URL
 ```
 
 # Add Domain Mapping (Optional)

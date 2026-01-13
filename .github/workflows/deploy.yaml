@@ -50,4 +50,4 @@ jobs:
                 --set-env-vars OAUTH_CLIENT_ID=${{ vars.OAUTH_CLIENT_ID }} \
                 --set-env-vars OAUTH_SECRET=${{ vars.OAUTH_SECRET }} \
                 --set-env-vars NEXTAUTH_SECRET=${{ vars.NEXTAUTH_SECRET }} \
-                --set-env-vars NEXTAUTH_URL=https://${{ vars.NEXTAUTH_URL }}
+                --set-env-vars NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}
