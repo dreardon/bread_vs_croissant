@@ -13,7 +13,8 @@ export const authOptions = {
             if (user.email === "danreardon@gmail.com") {
                 return true;
             }
-            return false; // Access denied
+            // Redirect unauthorized users to a custom page
+            return `/auth/unauthorized?email=${encodeURIComponent(user.email || 'Unknown')}`;
         },
     },
     secret: process.env.NEXTAUTH_SECRET,
